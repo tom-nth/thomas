@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meet Tako and Maki - Retro Sitter</title>
+    <title>tako & maki handbook</title>
     <style>
         :root {
             --bg-dark: #121212;
@@ -23,139 +23,156 @@
             background: var(--bg-dark);
             color: var(--text);
             line-height: 1.5;
+            overflow-x: hidden;
         }
-        .container { max-width: 800px; margin: 0 auto; padding: 15px; }
 
-        /* Header */
-        header {
+        /* Fixed header */
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-dark);
+            border-bottom: 2px solid var(--border);
+            padding: 10px;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 2px solid var(--border);
-            margin-bottom: 15px;
+            align-items: flex-start;
         }
-        .header-left h1 {
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title {
             font-size: 1.6rem;
             color: var(--primary);
             text-shadow: 0 0 10px rgba(255,94,94,0.5);
+            margin-bottom: 10px;
         }
-        .lang-selector {
-            position: relative;
-            display: inline-block;
+
+        /* Top Banner Image */
+        .banner-image {
+            width: 100%;
+            max-width: 800px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin: 10px 0;
+            border: 1px solid var(--border);
         }
-        .lang-selector select {
+
+        /* Task status */
+        .task-status {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .task-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: var(--bg-card);
-            color: var(--text);
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .task-icon.completed {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .task-icon.completed::after {
+            content: "";
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 12px;
+            height: 12px;
+            background: var(--success);
+            border-radius: 50%;
+            border: 2px solid var(--bg-dark);
+        }
+
+        /* Info buttons */
+        .info-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .info-btn {
+            background: var(--bg-card);
             border: 1px solid var(--border);
             padding: 5px 10px;
             border-radius: 3px;
-            font-family: 'Courier New', monospace;
-            cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-        }
-        .lang-selector:after {
-            content: "▼";
-            position: absolute;
-            top: 50%;
-            right: 8px;
-            transform: translateY(-50%);
-            pointer-events: none;
-            color: var(--text-dim);
-        }
-
-        /* Progress Bar */
-        .progress-container {
-            background: var(--bg-light);
-            height: 20px;
-            border-radius: 10px;
-            margin: 15px 0;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            position: relative;
-        }
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        .progress-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: var(--bg-dark);
-            font-weight: bold;
+            color: var(--text);
+            text-decoration: none;
             font-size: 0.8rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
         }
 
-        /* Pixel Cats */
-        .pixel-cats { display: flex; justify-content: center; gap: 30px; margin: 15px 0; }
-        .cat { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
-        .p { width: 16px; height: 16px; background: var(--bg-card); }
+        .info-btn:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        /* Main content */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 110px 15px 20px 15px;
+        }
+
+        /* Pixel Cats - Keep as fallback if images not loaded */
+        .pixel-cats {
+            display: none; /* Hidden when images are present */
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        .cat {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 2px;
+        }
+        .p {
+            width: 16px;
+            height: 16px;
+            background: var(--bg-card);
+        }
         .w { background: var(--text); }
         .t { background: var(--primary); }
         .m { background: var(--secondary); }
 
-        /* Navigation */
-        nav {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin: 15px 0;
-        }
-        .nav-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0 10px;
-        }
-        .nav-group h3 {
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-        .nav-links {
-            display: flex;
-            gap: 5px;
-        }
-        nav a {
-            color: var(--text);
-            text-decoration: none;
-            padding: 6px 10px;
+        /* Meet the Cats Image */
+        .meet-cats-image {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin: 15px auto;
+            display: block;
             border: 1px solid var(--border);
-            border-radius: 3px;
-            font-size: 0.8rem;
-            transition: all 0.2s;
-            position: relative;
-        }
-        nav a.completed {
-            background: var(--success);
-            color: var(--bg-dark);
-            border-color: var(--success);
-        }
-        nav a.completed:after {
-            content: "✓";
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--success);
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-        }
-        nav a:hover:not(.completed) {
-            background: var(--primary);
-            color: var(--bg-dark);
-            border-color: var(--primary);
         }
 
         /* Sections */
@@ -166,34 +183,36 @@
             margin-bottom: 20px;
             border: 1px solid var(--border);
         }
+
         section h2 {
             color: var(--primary);
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
-        section.task-section h2 {
-            cursor: pointer;
-        }
-        section.task-section h2:before {
-            content: "▼";
-            transition: transform 0.3s;
-        }
-        section.task-section.collapsed h2:before {
-            transform: rotate(-90deg);
-        }
+
         section h3 {
             color: var(--secondary);
             margin: 15px 0 10px 0;
         }
 
         /* Cards */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 15px 0; }
-        .card { background: var(--bg-light); padding: 15px; border-radius: 5px; border: 1px solid var(--border); }
-        .card h4 { color: var(--accent); margin-bottom: 10px; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .card {
+            background: var(--bg-light);
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid var(--border);
+        }
+        .card h4 {
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
 
         /* Task Lists */
         .task-list {
@@ -241,35 +260,54 @@
             color: var(--secondary);
         }
 
-        /* Status Indicator */
-        .status-indicator {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        .status-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .status-icon {
-            width: 40px;
+        /* Nyan Cat Animation */
+        .nyan-cat {
+            position: fixed;
+            width: 80px;
             height: 40px;
+            background: linear-gradient(to right, #ff0000, #ff9900, #ffff00, #00ff00, #0000ff, #9900ff);
+            border-radius: 20px;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0;
+        }
+        .nyan-cat::before {
+            content: "🐱";
+            position: absolute;
+            left: 5px;
+            top: 5px;
+            font-size: 20px;
+            text-shadow: 0 0 5px #fff;
+        }
+        .nyan-cat::after {
+            content: "";
+            position: absolute;
+            left: -10px;
+            top: 10px;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #ff0000, #ffff00);
             border-radius: 50%;
-            background: var(--bg-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 5px;
-            font-size: 1.2rem;
         }
-        .status-item.completed .status-icon {
-            background: var(--success);
+        @keyframes fly {
+            0% { transform: translateX(-100px) translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(calc(100vw + 100px)) translateY(0); opacity: 0; }
         }
-        .status-label {
-            font-size: 0.7rem;
-            color: var(--text-dim);
+        .nyan-cat.animate {
+            animation: fly 2s linear forwards;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f00;
+            border-radius: 50%;
+            z-index: 10000;
+            pointer-events: none;
         }
 
         footer {
@@ -282,33 +320,49 @@
         }
 
         @media (max-width: 600px) {
-            header { flex-direction: column; gap: 15px; }
-            .pixel-cats { gap: 15px; }
-            nav { flex-direction: column; }
-            .nav-group { margin: 5px 0; }
+            .header-content {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            .task-status {
+                justify-content: center;
+                margin-top: 10px;
+            }
+            .info-buttons {
+                flex-direction: row;
+                margin-top: 0;
+            }
+            .meet-cats-image {
+                height: 300px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
+    <div class="fixed-header">
+        <div class="header-content">
             <div class="header-left">
-                <h1>Meet Tako and Maki</h1>
+                <div class="title">tako & maki meows you</div>
+                <div class="task-status">
+                    <div class="task-icon" data-section="feeding" title="Feeding">🍗</div>
+                    <div class="task-icon" data-section="cleaning" title="Cleaning">💩</div>
+                    <div class="task-icon" data-section="playing" title="Playing">🔦</div>
+                    <div class="task-icon" data-section="leaving" title="Leaving">🚪</div>
+                </div>
             </div>
-            <div class="lang-selector">
-                <select id="language">
-                    <option value="en">🇬🇧 English</option>
-                    <option value="de">🇩🇪 Deutsch</option>
-                    <option value="fr">🇫🇷 Français</option>
-                </select>
+            <div class="info-buttons">
+                <a href="#first-things" class="info-btn">🔑first things</a>
+                <a href="#in-case-of" class="info-btn">🆘 in case of</a>
             </div>
-        </header>
-
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
-            <span class="progress-text" id="progressText">0/4 tasks complete</span>
         </div>
+    </div>
 
+    <div class="main-content">
+        <!-- TOP BANNER IMAGE - RECOMMENDED: 800x200px -->
+        <img src="tako-maki-banner.jpg" alt="Tako & Maki" class="banner-image" onerror="this.style.display='none'">
+
+        <!-- Pixel cats fallback if image fails to load -->
         <div class="pixel-cats">
             <div class="cat">
                 <div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div>
@@ -332,169 +386,142 @@
             </div>
         </div>
 
-        <nav>
-            <div class="nav-group">
-                <h3>Info</h3>
-                <div class="nav-links">
-                    <a href="#first-day">🔑 First Day</a>
-                    <a href="#emergency">⚠️ Emergency</a>
+        <!-- Task Sections -->
+        <section id="feeding">
+            <h2>🍗 FEEDING</h2>
+            <ul class="task-list" data-section="feeding">
+                <li><span class="task-name">1. 1 packet of wet food split onto 2 licky plates, mixed with water.</span></li>
+                <li><span class="task-name">2. Feed Tako separately: Put Tako's food in the toilet so Maki does not eat her share.</span></li>
+                <li><span class="task-name">3. Top up Dry Food: 1 plastic container (yellow lid) per day</span></li>
+                <li><span class="task-name">4. Check water fountain. Refill with tap water</span></li>
+            </ul>
+        </section>
+
+        <section id="cleaning">
+            <h2>💩 CLEANING</h2>
+            <ul class="task-list" data-section="cleaning">
+                <li><span class="task-name">1. Litter: Check for both poo and pee daily.</span></li>
+                <li><span class="task-name">2. Empty litter bin: When full. <a href="https://www.youtube.com/shorts/_hOsf1Ou9DY" target="_blank" style="color: var(--secondary);">Watch how to use litter bin</a></span></li>
+                <li><span class="task-name">3. Refill fresh cat litter if below about 5cm.</span></li>
+                <li><span class="task-name">4. Check surfaces: Bed, sofa, carpet for vomit or poo</span></li>
+                <li><span class="task-name">5. Use broom or vacuum if there is a lot of kitty litter on the floor</span></li>
+                <li><span class="task-name">6. Robot Vacuum cleans automatically at 10am everyday. Check it is back in place.</span></li>
+            </ul>
+        </section>
+
+        <section id="playing">
+            <h2>🔦 PLAYING</h2>
+            <ul class="task-list" data-section="playing">
+                <li><span class="task-name">1. Tako: Likes to play with laser light and string.</span></li>
+                <li><span class="task-name">2. Maki: Like to play with string, ping pong ball, spring.</span></li>
+                <li><span class="task-name">3. Both: loves belly rubs. doesn't bite or scratch</span></li>
+            </ul>
+        </section>
+
+        <section id="leaving">
+            <h2>🚪 ciao!</h2>
+            <ul class="task-list" data-section="leaving">
+                <li><span class="task-name">1. Check dry food and water.</span></li>
+                <li><span class="task-name">2. Leave window ajar for ventilation</span></li>
+                <li><span class="task-name">3. Lights will turn off automatically at sunset.</span></li>
+                <li><span class="task-name">4. Lock door when leaving.</span></li>
+            </ul>
+        </section>
+
+        <!-- Info Sections -->
+        <section id="first-things">
+            <h2>🔑 first things</h2>
+            <div class="grid">
+                <div class="card">
+                    <h4>🔐 ACCESS</h4>
+                    <p><strong>Lockbox:</strong> Staircase handlebar</p>
+                    <p><strong>Password:</strong> <code>******</code></p>
                 </div>
             </div>
-            <div class="nav-group">
-                <h3>Tasks</h3>
-                <div class="nav-links">
-                    <a href="#feeding" data-section="feeding">🍗 Feeding</a>
-                    <a href="#cleaning" data-section="cleaning">🧹 Cleaning</a>
-                    <a href="#playing" data-section="playing">🎮 Playing</a>
-                    <a href="#leaving" data-section="leaving">🚪 Leaving</a>
+            <h3>🐾 MEET THE CATS</h3>
+
+            <!-- MEET THE CATS IMAGE - RECOMMENDED: 600x400px -->
+            <img src="tako-maki-photo.jpg" alt="Meet Tako and Maki" class="meet-cats-image" onerror="this.style.display='none'">
+
+            <div class="grid">
+                <div class="card">
+                    <h4>🐈 TAKO</h4>
+                    <p><strong>Color:</strong> Black & white</p>
+                    <p><strong>Behavior:</strong> Playful, curious</p>
+                    <p><strong>Habits:</strong></p>
+                    <ul>
+                        <li>Obsessed with <strong>lights & shadows</strong></li>
+                        <li>Chases laser pointers</li>
+                        <li>Greets at door</li>
+                        <li>Bent tail (normal)</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>🐈 MAKI</h4>
+                    <p><strong>Color:</strong> Round, grey</p>
+                    <p><strong>Behavior:</strong> Food-motivated, <strong>extremely vocal</strong>, affectionate</p>
+                    <p><strong>Habits:</strong></p>
+                    <ul>
+                        <li>Hides ping pong balls</li>
+                        <li>Activates robot vacuum</li>
+                        <li>Talks non-stop</li>
+                    </ul>
                 </div>
             </div>
-        </nav>
+        </section>
 
-        <div class="status-indicator">
-            <div class="status-item" data-section="feeding">
-                <div class="status-icon">🍗</div>
-                <span class="status-label">Feeding</span>
-            </div>
-            <div class="status-item" data-section="cleaning">
-                <div class="status-icon">🧹</div>
-                <span class="status-label">Cleaning</span>
-            </div>
-            <div class="status-item" data-section="playing">
-                <div class="status-icon">🎮</div>
-                <span class="status-label">Playing</span>
-            </div>
-            <div class="status-item" data-section="leaving">
-                <div class="status-icon">🚪</div>
-                <span class="status-label">Leaving</span>
-            </div>
-        </div>
+        <section id="in-case-of">
+            <h2>🆘 in case of</h2>
+            <h3>📞 CONTACTS</h3>
+            <table>
+                <tr><th>Name</th><th>Role</th><th>Phone</th></tr>
+                <tr><td>A**** L****</td><td>Extra key</td><td>+41 76 571 10 15</td></tr>
+                <tr><td>M**** M*******</td><td>Emergency</td><td>+41 79 748 63 64</td></tr>
+                <tr><td>V**** A****</td><td>Emergency</td><td>+41 78 731 63 63</td></tr>
+                <tr><td>T****</td><td>Owner</td><td>[Your contact]</td></tr>
+                <tr><td>J****</td><td>Owner</td><td>[Your contact]</td></tr>
+            </table>
 
-        <main>
-            <section id="first-day">
-                <h2>🔑 FIRST DAY</h2>
-                <div class="grid">
-                    <div class="card">
-                        <h4>🔐 ACCESS</h4>
-                        <p><strong>Lockbox:</strong> Staircase handlebar</p>
-                        <p><strong>Password:</strong> <code>1709</code></p>
-                    </div>
+            <h3>🏥 VET</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Au Chat Bleu</h4>
+                    <p><strong>Phone:</strong> 032 341 07 81</p>
+                    <p><strong>Address:</strong> Mettlenweg 17, 2504 Bienne</p>
                 </div>
-                <h3>🐾 MEET THE CATS</h3>
-                <div class="grid">
-                    <div class="card">
-                        <h4>🐈 TAKO</h4>
-                        <p><strong>Color:</strong> Black & white</p>
-                        <p><strong>Behavior:</strong> Playful, curious</p>
-                        <p><strong>Habits:</strong></p>
-                        <ul>
-                            <li>Obsessed with <strong>lights & shadows</strong></li>
-                            <li>Chases laser pointers</li>
-                            <li>Greets at door</li>
-                            <li>Bent tail (normal)</li>
-                        </ul>
-                    </div>
-                    <div class="card">
-                        <h4>🐈 MAKI</h4>
-                        <p><strong>Color:</strong> Round, grey</p>
-                        <p><strong>Behavior:</strong> Food-motivated, <strong>extremely vocal</strong>, affectionate</p>
-                        <p><strong>Habits:</strong></p>
-                        <ul>
-                            <li>Hides ping pong balls</li>
-                            <li>Activates robot vacuum</li>
-                            <li>Talks non-stop</li>
-                        </ul>
-                    </div>
+                <div class="card">
+                    <h4>Holivet</h4>
+                    <p><strong>Phone:</strong> 032 341 65 65</p>
+                    <p><strong>Website:</strong> <a href="https://www.holivet.ch/" style="color: var(--secondary);">holivet.ch</a></p>
+                    <p><em>Dr. Christen – English speaking</em></p>
                 </div>
-            </section>
+            </div>
 
-            <section id="feeding" class="task-section">
-                <h2>🍗 FEEDING</h2>
-                <ul class="task-list" data-section="feeding">
-                    <li><span class="task-name"><strong>Wet Food:</strong> ½ packet per cat, mix with equal water, cut into small pieces, serve on licky plate</span></li>
-                    <li><span class="task-name"><strong>Feed Tako separately:</strong> Put Tako's food in the toilet so Maki does not eat her share</span></li>
-                    <li><span class="task-name"><strong>Dry Food:</strong> 1 plastic container (yellow lid) per day</span></li>
-                    <li><span class="task-name"><strong>Water:</strong> Refill fountain with green flask on kitchen counter</span></li>
-                </ul>
-            </section>
-
-            <section id="cleaning" class="task-section">
-                <h2>🧹 CLEANING</h2>
-                <ul class="task-list" data-section="cleaning">
-                    <li><span class="task-name"><strong>Litter:</strong> Check for both poo and pee daily. White cupboard under stairs (door left open)</span></li>
-                    <li><span class="task-name"><strong>Empty litter bin:</strong> When full. <a href="https://www.youtube.com/shorts/_hOsf1Ou9DY" target="_blank" style="color: var(--secondary);">Watch how to use litter bin</a></span></li>
-                    <li><span class="task-name"><strong>Trash bag:</strong> Blue trash bag can be found under the sink</span></li>
-                    <li><span class="task-name"><strong>Robot vacuum:</strong> Check it is back in place</span></li>
-                    <li><span class="task-name"><strong>Floors:</strong> Use broom or vacuum if there is a lot of kitty litter on the floor</span></li>
-                    <li><span class="task-name"><strong>Check surfaces:</strong> Bed, sofa, carpet for vomit or poo</span></li>
-                </ul>
-            </section>
-
-            <section id="playing" class="task-section">
-                <h2>🎮 PLAYING</h2>
-                <ul class="task-list" data-section="playing">
-                    <li><span class="task-name"><strong>Tako:</strong> Play with laser pointer</span></li>
-                    <li><span class="task-name"><strong>Maki:</strong> Play with string</span></li>
-                    <li><span class="task-name"><strong>Or:</strong> Belly rubs on the sofa</span></li>
-                </ul>
-            </section>
-
-            <section id="leaving" class="task-section">
-                <h2>🚪 LEAVING / CHECKING</h2>
-                <ul class="task-list" data-section="leaving">
-                    <li><span class="task-name"><strong>Check water and dry food</strong> – topped up</span></li>
-                    <li><span class="task-name"><strong>Windows</strong> – ajar for ventilation</span></li>
-                    <li><span class="task-name"><strong>Lock door</strong> – when leaving</span></li>
-                </ul>
-            </section>
-
-            <section id="emergency">
-                <h2>⚠️ EMERGENCY / MISC</h2>
-                <h3>📞 CONTACTS</h3>
-                <table>
-                    <tr><th>Name</th><th>Role</th><th>Phone</th></tr>
-                    <tr><td>Adolfo Lizardo</td><td>Extra key</td><td>+41 76 571 10 15</td></tr>
-                    <tr><td>Martin Micheelsen</td><td>Emergency</td><td>+41 79 748 63 64</td></tr>
-                    <tr><td>Victoria Ang</td><td>Emergency</td><td>+41 78 731 63 63</td></tr>
-                    <tr><td>Tom</td><td>Owner</td><td>[Your contact]</td></tr>
-                    <tr><td>Jael</td><td>Owner</td><td>[Your contact]</td></tr>
-                </table>
-
-                <h3>🏥 VET</h3>
-                <div class="grid">
-                    <div class="card">
-                        <h4>Au Chat Bleu</h4>
-                        <p><strong>Phone:</strong> 032 341 07 81</p>
-                        <p><strong>Address:</strong> Mettlenweg 17, 2504 Bienne</p>
-                    </div>
-                    <div class="card">
-                        <h4>Holivet</h4>
-                        <p><strong>Phone:</strong> 032 341 65 65</p>
-                        <p><strong>Website:</strong> <a href="https://www.holivet.ch/" style="color: var(--secondary);">holivet.ch</a></p>
-                        <p><em>Dr. Christen – English speaking</em></p>
-                    </div>
+            <h3>📦 SUPPLIES</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>📦 Cat carrier</h4>
+                    <p><strong>Location:</strong> Attic</p>
                 </div>
-
-                <h3>📦 SUPPLIES</h3>
-                <div class="grid">
-                    <div class="card"><h4>📦 Cat carrier</h4><p><strong>Location:</strong> Attic</p></div>
-                    <div class="card"><h4>📖 Medical booklets</h4><p><strong>Location:</strong> Cupboard</p></div>
-                    <div class="card"><h4>🧼 Cleaning products</h4><p><strong>Location:</strong> Bar counter & above toilet</p></div>
+                <div class="card">
+                    <h4>📖 Medical booklets</h4>
+                    <p><strong>Location:</strong> Cupboard</p>
                 </div>
-
-                <h3>💡 MISC</h3>
-                <ul>
-                    <li><strong>Collars/toys:</strong> Cats hide them – check under coffee table, behind piano</li>
-                    <li><strong>Robot vacuum:</strong> Maki may activate it – it moves furniture!</li>
-                    <li><strong>Downstairs door:</strong> <strong>Do NOT lock</strong> (despite sign)</li>
-                </ul>
-            </section>
-        </main>
-
-        <footer>
-            <p>MEET TAKO AND MAKI | RETRO CAT SITTER GUIDE | © 2026 | Made with ❤️</p>
-        </footer>
+                <div class="card">
+                    <h4>🧼 Cleaning products</h4>
+                    <p><strong>Location:</strong> Bar counter & above toilet</p>
+                </div>
+                <div class="card">
+                    <h4>🥫 Extra food</h4>
+                    <p><strong>Location:</strong> Attic</p>
+                </div>
+            </div>
+        </section>
     </div>
+
+    <footer>
+        <p>tako & maki meows you | RETRO CAT SITTER GUIDE | © 2026 | Made with ❤️</p>
+    </footer>
 
     <script>
         // Task completion tracking
@@ -510,44 +537,53 @@
         function checkSectionCompletion(section) {
             const tasks = document.querySelectorAll(`.task-list[data-section="${section}"] li`);
             const allCompleted = Array.from(tasks).every(task => task.classList.contains('completed'));
+
+            // Only trigger nyan cats when section transitions from incomplete to complete
+            if (allCompleted && !taskStatus[section]) {
+                flyNyanCats();
+            }
+
             taskStatus[section] = allCompleted;
             updateUI();
+            saveToLocalStorage();
+
+            // Check if all 4 main tasks are complete for confetti
+            if (Object.values(taskStatus).every(status => status)) {
+                celebrate();
+            }
         }
 
         // Update UI based on task status
         function updateUI() {
-            // Update nav links
             sections.forEach(section => {
-                const navLink = document.querySelector(`nav a[data-section="${section}"]`);
-                const statusItem = document.querySelector(`.status-item[data-section="${section}"]`);
+                const taskIcon = document.querySelector(`.task-icon[data-section="${section}"]`);
                 if (taskStatus[section]) {
-                    navLink.classList.add('completed');
-                    statusItem.classList.add('completed');
+                    taskIcon.classList.add('completed');
                 } else {
-                    navLink.classList.remove('completed');
-                    statusItem.classList.remove('completed');
+                    taskIcon.classList.remove('completed');
                 }
             });
+        }
 
-            // Update progress bar
-            const completedCount = Object.values(taskStatus).filter(status => status).length;
-            const progressPercent = (completedCount / sections.length) * 100;
-            document.getElementById('progressBar').style.width = `${progressPercent}%`;
-            document.getElementById('progressText').textContent = `${completedCount}/${sections.length} tasks complete`;
-
-            // Confetti when all tasks are complete
-            if (completedCount === sections.length && !window.allCompleteCelebrated) {
-                celebrate();
-                window.allCompleteCelebrated = true;
-            } else if (completedCount < sections.length) {
-                window.allCompleteCelebrated = false;
+        // Fly nyan cats across screen
+        function flyNyanCats() {
+            for (let i = 0; i < 2; i++) {
+                setTimeout(() => {
+                    const nyan = document.createElement('div');
+                    nyan.className = 'nyan-cat';
+                    nyan.style.top = (Math.random() * 70 + 15) + 'vh';
+                    nyan.style.left = '-100px';
+                    document.body.appendChild(nyan);
+                    setTimeout(() => nyan.classList.add('animate'), 10);
+                    setTimeout(() => nyan.remove(), 2000);
+                }, i * 300);
             }
         }
 
-        // Celebration effect
+        // Confetti celebration
         function celebrate() {
-            const colors = ['#ff5e5e', '#5e5eff', '#5eff5e', '#ffeb3b', '#ff5e5e'];
-            for (let i = 0; i < 50; i++) {
+            const colors = ['#ff5e5e', '#5e5eff', '#5eff5e', '#ffeb3b', '#ff9900'];
+            for (let i = 0; i < 100; i++) {
                 setTimeout(() => {
                     createConfetti(colors[Math.floor(Math.random() * colors.length)]);
                 }, i * 30);
@@ -556,67 +592,77 @@
 
         function createConfetti(color) {
             const confetti = document.createElement('div');
-            confetti.style.position = 'fixed';
-            confetti.style.width = '10px';
-            confetti.style.height = '10px';
+            confetti.className = 'confetti';
             confetti.style.backgroundColor = color;
-            confetti.style.borderRadius = '50%';
             confetti.style.left = Math.random() * 100 + 'vw';
             confetti.style.top = '-10px';
-            confetti.style.zIndex = '9999';
-            confetti.style.pointerEvents = 'none';
             document.body.appendChild(confetti);
+
+            const size = Math.random() * 8 + 4;
+            confetti.style.width = size + 'px';
+            confetti.style.height = size + 'px';
+            confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
 
             const animation = confetti.animate([
                 { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
                 { transform: `translateY(${Math.random() * 100 + 100}vh) rotate(${Math.random() * 360}deg)`, opacity: 0 }
             ], {
-                duration: 1000 + Math.random() * 1000,
+                duration: 1000 + Math.random() * 2000,
                 easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
             });
 
-            animation.onfinish = () => {
-                confetti.remove();
-            };
+            animation.onfinish = () => confetti.remove();
+        }
+
+        // Save to localStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('takoMakiTasks', JSON.stringify(taskStatus));
+        }
+
+        // Load from localStorage
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('takoMakiTasks');
+            if (saved) {
+                Object.assign(taskStatus, JSON.parse(saved));
+                updateUI();
+                // Restore task completion states
+                sections.forEach(section => {
+                    if (taskStatus[section]) {
+                        const tasks = document.querySelectorAll(`.task-list[data-section="${section}"] li`);
+                        tasks.forEach(task => task.classList.add('completed'));
+                    }
+                });
+            }
         }
 
         // Initialize task listeners
         document.querySelectorAll('.task-list li').forEach(task => {
             task.addEventListener('click', function() {
                 this.classList.toggle('completed');
-                const section = this.closest('.task-section').id;
+                const section = this.closest('section').id;
                 checkSectionCompletion(section);
             });
         });
 
-        // Initialize section collapse
-        document.querySelectorAll('.task-section h2').forEach(header => {
-            header.addEventListener('click', function() {
-                this.closest('.task-section').classList.toggle('collapsed');
+        // Task icon click - scroll to section
+        document.querySelectorAll('.task-icon').forEach(icon => {
+            icon.addEventListener('click', function() {
+                const sectionId = this.getAttribute('data-section');
+                document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
             });
         });
 
-        // Smooth scroll navigation
-        document.querySelectorAll('nav a').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
+        // Info button click - scroll to section
+        document.querySelectorAll('.info-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
                 e.preventDefault();
-                const targetId = this.getAttribute('href');
-                document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+                const sectionId = this.getAttribute('href').substring(1);
+                document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
             });
         });
 
-        // Update active nav on scroll
-        window.addEventListener('scroll', () => {
-            const sections = document.querySelectorAll('section');
-            let current = '';
-            sections.forEach(section => {
-                if (window.pageYOffset >= section.offsetTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-        });
-
-        // Initialize UI
+        // Initialize
+        loadFromLocalStorage();
         updateUI();
     </script>
 </body>
