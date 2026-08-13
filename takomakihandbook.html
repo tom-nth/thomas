@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meet Tako and Maki - Retro Sitter</title>
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --bg-card: #1e1e1e;
+            --bg-light: #252525;
+            --text: #e0e0e0;
+            --text-dim: #888;
+            --primary: #ff5e5e;
+            --secondary: #5e5eff;
+            --accent: #5eff5e;
+            --success: #5eff5e;
+            --border: #333;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.5;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 15px; }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 15px;
+        }
+        .header-left h1 {
+            font-size: 1.6rem;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(255,94,94,0.5);
+        }
+        .lang-selector {
+            position: relative;
+            display: inline-block;
+        }
+        .lang-selector select {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+        .lang-selector:after {
+            content: "▼";
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--text-dim);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: var(--bg-light);
+            height: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--bg-dark);
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        /* Pixel Cats */
+        .pixel-cats { display: flex; justify-content: center; gap: 30px; margin: 15px 0; }
+        .cat { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
+        .p { width: 16px; height: 16px; background: var(--bg-card); }
+        .w { background: var(--text); }
+        .t { background: var(--primary); }
+        .m { background: var(--secondary); }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+        .nav-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 10px;
+        }
+        .nav-group h3 {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .nav-links {
+            display: flex;
+            gap: 5px;
+        }
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            padding: 6px 10px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+            position: relative;
+        }
+        nav a.completed {
+            background: var(--success);
+            color: var(--bg-dark);
+            border-color: var(--success);
+        }
+        nav a.completed:after {
+            content: "✓";
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--success);
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        nav a:hover:not(.completed) {
+            background: var(--primary);
+            color: var(--bg-dark);
+            border-color: var(--primary);
+        }
+
+        /* Sections */
+        section {
+            background: var(--bg-card);
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+        section h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        section.task-section h2 {
+            cursor: pointer;
+        }
+        section.task-section h2:before {
+            content: "▼";
+            transition: transform 0.3s;
+        }
+        section.task-section.collapsed h2:before {
+            transform: rotate(-90deg);
+        }
+        section h3 {
+            color: var(--secondary);
+            margin: 15px 0 10px 0;
+        }
+
+        /* Cards */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 15px 0; }
+        .card { background: var(--bg-light); padding: 15px; border-radius: 5px; border: 1px solid var(--border); }
+        .card h4 { color: var(--accent); margin-bottom: 10px; }
+
+        /* Task Lists */
+        .task-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+        .task-list li {
+            padding: 10px;
+            margin: 5px 0;
+            background: var(--bg-light);
+            border-radius: 5px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .task-list li.completed {
+            background: rgba(94, 255, 94, 0.1);
+            border-color: var(--success);
+        }
+        .task-list li.completed:before {
+            content: "✓";
+            position: absolute;
+            left: 10px;
+            color: var(--success);
+        }
+        .task-list li .task-name {
+            margin-left: 25px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background: var(--bg-dark);
+            color: var(--secondary);
+        }
+
+        /* Status Indicator */
+        .status-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .status-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .status-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+        .status-item.completed .status-icon {
+            background: var(--success);
+        }
+        .status-label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border);
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            header { flex-direction: column; gap: 15px; }
+            .pixel-cats { gap: 15px; }
+            nav { flex-direction: column; }
+            .nav-group { margin: 5px 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <h1>Meet Tako and Maki</h1>
+            </div>
+            <div class="lang-selector">
+                <select id="language">
+                    <option value="en">🇬🇧 English</option>
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="fr">🇫🇷 Français</option>
+                </select>
+            </div>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <span class="progress-text" id="progressText">0/4 tasks complete</span>
+        </div>
+
+        <div class="pixel-cats">
+            <div class="cat">
+                <div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div>
+                <div class="p w"></div><div class="p t"></div><div class="p t"></div><div class="p t"></div><div class="p t"></div><div class="p t"></div><div class="p t"></div><div class="p w"></div>
+                <div class="p w"></div><div class="p t"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p t"></div><div class="p w"></div>
+                <div class="p w"></div><div class="p t"></div><div class="p w"></div><div class="p t"></div><div class="p t"></div><div class="p w"></div><div class="p t"></div><div class="p w"></div>
+                <div class="p w"></div><div class="p t"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p t"></div><div class="p w"></div>
+                <div class="p w"></div><div class="p t"></div><div class="p t"></div><div class="p t"></div><div class="p t"></div><div class="p t"></div><div class="p t"></div><div class="p w"></div>
+                <div class="p w"></div><div class="p w"></div><div class="p t"></div><div class="p t"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div>
+                <div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p t"></div><div class="p t"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div>
+            </div>
+            <div class="cat">
+                <div class="p m"></div><div class="p m"></div><div class="p m"></div><div class="p m"></div><div class="p m"></div><div class="p m"></div><div class="p m"></div><div class="p m"></div>
+                <div class="p m"></div><div class="p m"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p m"></div><div class="p m"></div>
+                <div class="p m"></div><div class="p w"></div><div class="p w"></div><div class="p m"></div><div class="p m"></div><div class="p w"></div><div class="p w"></div><div class="p m"></div>
+                <div class="p m"></div><div class="p w"></div><div class="p m"></div><div class="p m"></div><div class="p m"></div><div class="p m"></div><div class="p w"></div><div class="p m"></div>
+                <div class="p m"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p m"></div>
+                <div class="p m"></div><div class="p m"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p m"></div><div class="p m"></div>
+                <div class="p m"></div><div class="p m"></div><div class="p m"></div><div class="p m"></div><div class="p m"></div><div class="p m"></div><div class="p m"></div><div class="p m"></div>
+                <div class="p w"></div><div class="p w"></div><div class="p m"></div><div class="p m"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div><div class="p w"></div>
+            </div>
+        </div>
+
+        <nav>
+            <div class="nav-group">
+                <h3>Info</h3>
+                <div class="nav-links">
+                    <a href="#first-day">🔑 First Day</a>
+                    <a href="#emergency">⚠️ Emergency</a>
+                </div>
+            </div>
+            <div class="nav-group">
+                <h3>Tasks</h3>
+                <div class="nav-links">
+                    <a href="#feeding" data-section="feeding">🍗 Feeding</a>
+                    <a href="#cleaning" data-section="cleaning">🧹 Cleaning</a>
+                    <a href="#playing" data-section="playing">🎮 Playing</a>
+                    <a href="#leaving" data-section="leaving">🚪 Leaving</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="status-indicator">
+            <div class="status-item" data-section="feeding">
+                <div class="status-icon">🍗</div>
+                <span class="status-label">Feeding</span>
+            </div>
+            <div class="status-item" data-section="cleaning">
+                <div class="status-icon">🧹</div>
+                <span class="status-label">Cleaning</span>
+            </div>
+            <div class="status-item" data-section="playing">
+                <div class="status-icon">🎮</div>
+                <span class="status-label">Playing</span>
+            </div>
+            <div class="status-item" data-section="leaving">
+                <div class="status-icon">🚪</div>
+                <span class="status-label">Leaving</span>
+            </div>
+        </div>
+
+        <main>
+            <section id="first-day">
+                <h2>🔑 FIRST DAY</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h4>🔐 ACCESS</h4>
+                        <p><strong>Lockbox:</strong> Staircase handlebar</p>
+                        <p><strong>Password:</strong> <code>1709</code></p>
+                    </div>
+                </div>
+                <h3>🐾 MEET THE CATS</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>🐈 TAKO</h4>
+                        <p><strong>Color:</strong> Black & white</p>
+                        <p><strong>Behavior:</strong> Playful, curious</p>
+                        <p><strong>Habits:</strong></p>
+                        <ul>
+                            <li>Obsessed with <strong>lights & shadows</strong></li>
+                            <li>Chases laser pointers</li>
+                            <li>Greets at door</li>
+                            <li>Bent tail (normal)</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🐈 MAKI</h4>
+                        <p><strong>Color:</strong> Round, grey</p>
+                        <p><strong>Behavior:</strong> Food-motivated, <strong>extremely vocal</strong>, affectionate</p>
+                        <p><strong>Habits:</strong></p>
+                        <ul>
+                            <li>Hides ping pong balls</li>
+                            <li>Activates robot vacuum</li>
+                            <li>Talks non-stop</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="feeding" class="task-section">
+                <h2>🍗 FEEDING</h2>
+                <ul class="task-list" data-section="feeding">
+                    <li><span class="task-name"><strong>Wet Food:</strong> ½ packet per cat, mix with equal water, cut into small pieces, serve on licky plate</span></li>
+                    <li><span class="task-name"><strong>Feed Tako separately:</strong> Put Tako's food in the toilet so Maki does not eat her share</span></li>
+                    <li><span class="task-name"><strong>Dry Food:</strong> 1 plastic container (yellow lid) per day</span></li>
+                    <li><span class="task-name"><strong>Water:</strong> Refill fountain with green flask on kitchen counter</span></li>
+                </ul>
+            </section>
+
+            <section id="cleaning" class="task-section">
+                <h2>🧹 CLEANING</h2>
+                <ul class="task-list" data-section="cleaning">
+                    <li><span class="task-name"><strong>Litter:</strong> Check for both poo and pee daily. White cupboard under stairs (door left open)</span></li>
+                    <li><span class="task-name"><strong>Empty litter bin:</strong> When full. <a href="https://www.youtube.com/shorts/_hOsf1Ou9DY" target="_blank" style="color: var(--secondary);">Watch how to use litter bin</a></span></li>
+                    <li><span class="task-name"><strong>Trash bag:</strong> Blue trash bag can be found under the sink</span></li>
+                    <li><span class="task-name"><strong>Robot vacuum:</strong> Check it is back in place</span></li>
+                    <li><span class="task-name"><strong>Floors:</strong> Use broom or vacuum if there is a lot of kitty litter on the floor</span></li>
+                    <li><span class="task-name"><strong>Check surfaces:</strong> Bed, sofa, carpet for vomit or poo</span></li>
+                </ul>
+            </section>
+
+            <section id="playing" class="task-section">
+                <h2>🎮 PLAYING</h2>
+                <ul class="task-list" data-section="playing">
+                    <li><span class="task-name"><strong>Tako:</strong> Play with laser pointer</span></li>
+                    <li><span class="task-name"><strong>Maki:</strong> Play with string</span></li>
+                    <li><span class="task-name"><strong>Or:</strong> Belly rubs on the sofa</span></li>
+                </ul>
+            </section>
+
+            <section id="leaving" class="task-section">
+                <h2>🚪 LEAVING / CHECKING</h2>
+                <ul class="task-list" data-section="leaving">
+                    <li><span class="task-name"><strong>Check water and dry food</strong> – topped up</span></li>
+                    <li><span class="task-name"><strong>Windows</strong> – ajar for ventilation</span></li>
+                    <li><span class="task-name"><strong>Lock door</strong> – when leaving</span></li>
+                </ul>
+            </section>
+
+            <section id="emergency">
+                <h2>⚠️ EMERGENCY / MISC</h2>
+                <h3>📞 CONTACTS</h3>
+                <table>
+                    <tr><th>Name</th><th>Role</th><th>Phone</th></tr>
+                    <tr><td>Adolfo Lizardo</td><td>Extra key</td><td>+41 76 571 10 15</td></tr>
+                    <tr><td>Martin Micheelsen</td><td>Emergency</td><td>+41 79 748 63 64</td></tr>
+                    <tr><td>Victoria Ang</td><td>Emergency</td><td>+41 78 731 63 63</td></tr>
+                    <tr><td>Tom</td><td>Owner</td><td>[Your contact]</td></tr>
+                    <tr><td>Jael</td><td>Owner</td><td>[Your contact]</td></tr>
+                </table>
+
+                <h3>🏥 VET</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>Au Chat Bleu</h4>
+                        <p><strong>Phone:</strong> 032 341 07 81</p>
+                        <p><strong>Address:</strong> Mettlenweg 17, 2504 Bienne</p>
+                    </div>
+                    <div class="card">
+                        <h4>Holivet</h4>
+                        <p><strong>Phone:</strong> 032 341 65 65</p>
+                        <p><strong>Website:</strong> <a href="https://www.holivet.ch/" style="color: var(--secondary);">holivet.ch</a></p>
+                        <p><em>Dr. Christen – English speaking</em></p>
+                    </div>
+                </div>
+
+                <h3>📦 SUPPLIES</h3>
+                <div class="grid">
+                    <div class="card"><h4>📦 Cat carrier</h4><p><strong>Location:</strong> Attic</p></div>
+                    <div class="card"><h4>📖 Medical booklets</h4><p><strong>Location:</strong> Cupboard</p></div>
+                    <div class="card"><h4>🧼 Cleaning products</h4><p><strong>Location:</strong> Bar counter & above toilet</p></div>
+                </div>
+
+                <h3>💡 MISC</h3>
+                <ul>
+                    <li><strong>Collars/toys:</strong> Cats hide them – check under coffee table, behind piano</li>
+                    <li><strong>Robot vacuum:</strong> Maki may activate it – it moves furniture!</li>
+                    <li><strong>Downstairs door:</strong> <strong>Do NOT lock</strong> (despite sign)</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <p>MEET TAKO AND MAKI | RETRO CAT SITTER GUIDE | © 2026 | Made with ❤️</p>
+        </footer>
+    </div>
+
+    <script>
+        // Task completion tracking
+        const sections = ['feeding', 'cleaning', 'playing', 'leaving'];
+        const taskStatus = {
+            feeding: false,
+            cleaning: false,
+            playing: false,
+            leaving: false
+        };
+
+        // Check if all tasks in a section are completed
+        function checkSectionCompletion(section) {
+            const tasks = document.querySelectorAll(`.task-list[data-section="${section}"] li`);
+            const allCompleted = Array.from(tasks).every(task => task.classList.contains('completed'));
+            taskStatus[section] = allCompleted;
+            updateUI();
+        }
+
+        // Update UI based on task status
+        function updateUI() {
+            // Update nav links
+            sections.forEach(section => {
+                const navLink = document.querySelector(`nav a[data-section="${section}"]`);
+                const statusItem = document.querySelector(`.status-item[data-section="${section}"]`);
+                if (taskStatus[section]) {
+                    navLink.classList.add('completed');
+                    statusItem.classList.add('completed');
+                } else {
+                    navLink.classList.remove('completed');
+                    statusItem.classList.remove('completed');
+                }
+            });
+
+            // Update progress bar
+            const completedCount = Object.values(taskStatus).filter(status => status).length;
+            const progressPercent = (completedCount / sections.length) * 100;
+            document.getElementById('progressBar').style.width = `${progressPercent}%`;
+            document.getElementById('progressText').textContent = `${completedCount}/${sections.length} tasks complete`;
+
+            // Confetti when all tasks are complete
+            if (completedCount === sections.length && !window.allCompleteCelebrated) {
+                celebrate();
+                window.allCompleteCelebrated = true;
+            } else if (completedCount < sections.length) {
+                window.allCompleteCelebrated = false;
+            }
+        }
+
+        // Celebration effect
+        function celebrate() {
+            const colors = ['#ff5e5e', '#5e5eff', '#5eff5e', '#ffeb3b', '#ff5e5e'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    createConfetti(colors[Math.floor(Math.random() * colors.length)]);
+                }, i * 30);
+            }
+        }
+
+        function createConfetti(color) {
+            const confetti = document.createElement('div');
+            confetti.style.position = 'fixed';
+            confetti.style.width = '10px';
+            confetti.style.height = '10px';
+            confetti.style.backgroundColor = color;
+            confetti.style.borderRadius = '50%';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.top = '-10px';
+            confetti.style.zIndex = '9999';
+            confetti.style.pointerEvents = 'none';
+            document.body.appendChild(confetti);
+
+            const animation = confetti.animate([
+                { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                { transform: `translateY(${Math.random() * 100 + 100}vh) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+            ], {
+                duration: 1000 + Math.random() * 1000,
+                easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+            });
+
+            animation.onfinish = () => {
+                confetti.remove();
+            };
+        }
+
+        // Initialize task listeners
+        document.querySelectorAll('.task-list li').forEach(task => {
+            task.addEventListener('click', function() {
+                this.classList.toggle('completed');
+                const section = this.closest('.task-section').id;
+                checkSectionCompletion(section);
+            });
+        });
+
+        // Initialize section collapse
+        document.querySelectorAll('.task-section h2').forEach(header => {
+            header.addEventListener('click', function() {
+                this.closest('.task-section').classList.toggle('collapsed');
+            });
+        });
+
+        // Smooth scroll navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Update active nav on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            let current = '';
+            sections.forEach(section => {
+                if (window.pageYOffset >= section.offsetTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+        });
+
+        // Initialize UI
+        updateUI();
+    </script>
+</body>
+</html>
